@@ -2,8 +2,23 @@
 // ********** EVENT LISTENERS ********** //
 
 //onSubmit forms for userNames - create a player instance and also initialize the starting user by adding a class name to grid-container class list
+let usersForm = document.getElementById('users');
 
+usersForm.addEventListener("submit", (event) =>{
+  event.preventDefault();
 
+  playerName1 = document.getElementById('player1').value.split(' ').join('');
+  playerName2 = document.getElementById('player2').value.split(' ').join('');
+  if ((playerName1.length || playerName2.length) === 0) {
+    alert("player name cannot be blank");
+  }
+
+  //createPlayer(player1, player2); <------- *******
+  window.player1 = new Player(playerName1);
+  window.player2 = new Player(playerName2);
+  console.log([player1, player2]);
+  document.getElementsByClassName('grid-container')[0].classList.add('player1');
+})
 
 //add click event listener to each griditem
 let gridItems = document.querySelectorAll('.grid-item');
@@ -16,7 +31,11 @@ for (let element of gridItems) {
       return;
     }
     //element.innerHTML= 'x';
-    element.style.backgroundColor = 'lightblue';
+    if (document.getElementsByClassName('grid-container')[0].classList.contains('player1')) {
+      element.style.backgroundColor = 'lightgreen'
+    } else {
+      element.style.backgroundColor = 'lightblue';
+    }
     element.classList.add('clicked');
     clickedItems.push(processClassName(element.classList[0]));
     console.log(clickedItems);
@@ -68,3 +87,4 @@ class Player {
     this.diagonals = diagonals;
   }
 }
+
