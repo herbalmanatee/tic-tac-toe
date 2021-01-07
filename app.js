@@ -31,31 +31,35 @@ for (let element of gridItems) {
       alert('piece already in this position, pick an open position');
       return;
     }
+    //coords!!
+    let coords = processClassName(element.classList[0]);
 
+    //following conditional operates on the user whose turn it is
     if (gridContainerClassList.contains('player1')) {
       element.style.backgroundColor = 'lightgreen';
       element.innerHTML =`X ${player1.name}`;
       gridContainerClassList.remove('player1');
       gridContainerClassList.add('player2');
+      player1.addCoords(coords)
     } else {
       element.style.backgroundColor = 'lightblue';
       element.innerHTML =`O ${player2.name}`;
       gridContainerClassList.remove('player2');
       gridContainerClassList.add('player1')
+      player2.addCoords(coords)
     }
     element.classList.add('clicked');
-
-    clickedItems.push(processClassName(element.classList[0]));
-    console.log(clickedItems);
+    //console.log(clickedItems);
   });
 }
 
 
 //function to process class name into coords
-let clickedItems = [];
+//et clickedItems = [];
 
 let processClassName = (className) => {
   let length = className.length
+  console.log(typeof className.slice(length-2))
   return className.slice(length-2);
 }
 
@@ -86,6 +90,10 @@ let diagonals = {
   minor: null
 }
 
+let majorDiagonalCoords = [03, 11, 30];
+let minorDiagonalCoords = [00, 11, 33];
+
+
 //a Player class for each player
 class Player {
   constructor(name) {
@@ -93,6 +101,28 @@ class Player {
     this.xCoords = xCoords;
     this.yCoords = yCoords;
     this.diagonals = diagonals;
+    this.wins = 0;
+  }
+  addCoords (coords) {
+    console.log('coords: ', coords)
+    let xCoord = coords[0]
+    console.log(xCoord *1);
+    let yCoord = coords[1]
+
+    if (majorDiagonalCoords.includes(coords)) {
+      this.diagonals.major +=1
+    }
+
+    if (minorDiagonalCoords.includes(coords)) {
+      this.diagonals.minor +=1
+    }
+
+    this.xCoords[xCoord*1] +=1
+    this.yCoords[yCoord*1] +=1
+    console.log(this.name);
+    console.log('xCoords: ', this.xCoords);
+    console.log('yCoords: ', this.yCoords);
+    console.log('diagonals: ', this.diagonals);
   }
 }
 
