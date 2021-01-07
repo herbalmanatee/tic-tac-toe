@@ -1,6 +1,23 @@
 
 // ********** EVENT LISTENERS ********** //
 
+//onClick listener for reset board
+let resetButton = document.getElementById('reset');
+
+resetButton.addEventListener("click", ()=> {
+  for (let element of gridItems) {
+    element.style.backgroundColor = 'white';
+    element.innerHTML = ''
+    element.classList.remove('clicked');
+    gridContainerClassList.remove('player1');
+    gridContainerClassList.remove('player2');
+    gridContainerClassList.add('player1');
+  }
+  player1.clearBoard();
+  player2.clearBoard();
+})
+
+
 //onSubmit forms for userNames - create a player instance and also initialize the starting user by adding a class name to grid-container class list
 let usersForm = document.getElementById('users');
 
@@ -22,11 +39,11 @@ usersForm.addEventListener("submit", (event) =>{
 
 //add click event listener to each griditem
 let gridItems = document.querySelectorAll('.grid-item');
+let gridContainerClassList = document.getElementsByClassName('grid-container')[0].classList
 
 for (let element of gridItems) {
   element.addEventListener("click", ()=>{
     let classList = element.classList
-    let gridContainerClassList = document.getElementsByClassName('grid-container')[0].classList
     if (classList.contains('clicked')) {
       alert('piece already in this position, pick an open position');
       return;
@@ -44,6 +61,7 @@ for (let element of gridItems) {
     } else {
       element.style.backgroundColor = 'lightblue';
       element.innerHTML =`O ${player2.name}`;
+      console.log('here');
       gridContainerClassList.remove('player2');
       gridContainerClassList.add('player1')
       player2.addCoords(coords)
@@ -52,8 +70,6 @@ for (let element of gridItems) {
     //console.log(clickedItems);
   });
 }
-
-
 //function to process class name into coords
 //et clickedItems = [];
 
@@ -72,35 +88,30 @@ storing coordinates <--- this is a naive solution .. mvp
       •three x's in the same row i.e. (0,0 ; 1,0 ; 2,0)
       •three y's in the same column i.e (0,0; 0,1; 0,2)
       •diagonal solution ()
- */
-let yCoords = {
-  0: null,
-  1: null,
-  2: null
-}
+*/
 
-let xCoords = {
-  0: null,
-  1: null,
-  2: null
-}
-
-let diagonals = {
-  major: null,
-  minor: null
-}
-
-let majorDiagonalCoords = [03, 11, 30];
-let minorDiagonalCoords = [00, 11, 33];
+let majorDiagonalCoords = ['02', '11', '20'];
+let minorDiagonalCoords = ['00', '11', '22'];
 
 
 //a Player class for each player
 class Player {
   constructor(name) {
     this.name = name;
-    this.xCoords = xCoords;
-    this.yCoords = yCoords;
-    this.diagonals = diagonals;
+    this.xCoords = {
+      0: 0,
+      1: 0,
+      2: 0
+    };
+    this.yCoords = {
+      0: 0,
+      1: 0,
+      2: 0
+    };
+    this.diagonals =     {
+      major: 0,
+      minor: 0
+    };
     this.wins = 0;
   }
   addCoords (coords) {
@@ -111,18 +122,37 @@ class Player {
 
     if (majorDiagonalCoords.includes(coords)) {
       this.diagonals.major +=1
+      this.checkForWin(this.diagonals);
     }
 
     if (minorDiagonalCoords.includes(coords)) {
       this.diagonals.minor +=1
+      this.checkForWin(this.diagonals);
     }
 
     this.xCoords[xCoord*1] +=1
+    this.checkForWin(this.xCoords);
     this.yCoords[yCoord*1] +=1
-    console.log(this.name);
-    console.log('xCoords: ', this.xCoords);
-    console.log('yCoords: ', this.yCoords);
-    console.log('diagonals: ', this.diagonals);
+    this.checkForWin(this.yCoords);
   }
+
+  checkForWin(obj) {
+    for (let key in obj) {
+      if (obj[key] === 3) {
+        this.wins++;
+        setTimeout(() => {alert(`${this.name} got three in a row! They have ${this.wins} wins...`)}, 0);
+      }
+    }
+  }
+
+  clearBoard () {
+    let objsArr = [this.xCoords, this.yCoords, this.diagonals];
+    for (let obj of objsArr) {
+      for (let key in obj) {
+        obj[key] = 0;
+      }
+    }
+  }
+
 }
 
