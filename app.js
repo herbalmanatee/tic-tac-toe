@@ -26,17 +26,25 @@ let gridItems = document.querySelectorAll('.grid-item');
 for (let element of gridItems) {
   element.addEventListener("click", ()=>{
     let classList = element.classList
+    let gridContainerClassList = document.getElementsByClassName('grid-container')[0].classList
     if (classList.contains('clicked')) {
       alert('piece already in this position, pick an open position');
       return;
     }
-    //element.innerHTML= 'x';
-    if (document.getElementsByClassName('grid-container')[0].classList.contains('player1')) {
-      element.style.backgroundColor = 'lightgreen'
+
+    if (gridContainerClassList.contains('player1')) {
+      element.style.backgroundColor = 'lightgreen';
+      element.innerHTML =`X ${player1.name}`;
+      gridContainerClassList.remove('player1');
+      gridContainerClassList.add('player2');
     } else {
       element.style.backgroundColor = 'lightblue';
+      element.innerHTML =`O ${player2.name}`;
+      gridContainerClassList.remove('player2');
+      gridContainerClassList.add('player1')
     }
     element.classList.add('clicked');
+
     clickedItems.push(processClassName(element.classList[0]));
     console.log(clickedItems);
   });
